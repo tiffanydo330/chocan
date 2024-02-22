@@ -6,6 +6,9 @@
 # the person class will be responsible for the data that both members & providers share
 
 #import numpy 
+
+from marshmallow import Schema, fields, post_load
+
 class Person:
     def __init__(self, name, id_num, street, city, state, zip_code):
         self.name = name
@@ -29,23 +32,11 @@ class Member(Person):
         self.services = services 
 
 class MemberSchema(PersonSchema):
-        services = fields.List(fields.Str())
+    services = fields.List(fields.Str())
             
-        @post_load
-        def make_member(self, data, **kwargs):
-            return Member(**data)
-    """
-    def to_dict(self):
-        return {
-                "name": self.name,
-                "id_num": self.id_num,
-                "street": self.street,
-                "city": self.city,
-                "state": self.state,
-                "zip_code": self.zip_code,
-                "services": self.services
-        }
-    """
+    @post_load
+    def make_member(self, data, **kwargs):
+        return Member(**data)
 
 class Provider(Person):
     def __init__(self, name, id_num, street, city, state, zip_code, 
@@ -55,27 +46,13 @@ class Provider(Person):
         self.num_consultations = num_consultations
         self.total_wk_fee = total_wk_fee
 class ProviderSchema(PersonSchema):
-    services = fields.List(fields.Str())
+    services = fields.Nested('ProviderServiceSchema', many=True)
     num_consultations = fields.Integer()
     total_wk_fee = fields.Float()
 
     @post_load
     def make_provider(self, data, **kwargs):
         return Provider(**data)
-    """
-    def to_dict(self):
-        return {
-                "name": self.name,
-                "id_num": self.id_num,
-                "street": self.street,
-                "city": self.city,
-                "state": self.state,
-                "zip_code": self.zip_code,
-                "services": self.services,
-                "num_consultations": self.num_consultations,
-                "total_wk_fee": self.total_wk_fee
-        }
-    """
 
 class Service:
     def __init__(self, date):

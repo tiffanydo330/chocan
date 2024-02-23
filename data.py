@@ -6,7 +6,7 @@
 # the person class will be responsible for the data that both members & providers share
 
 #import numpy 
-
+from datetime import datetime
 from marshmallow import Schema, fields, post_load
 
 class Person:
@@ -32,7 +32,7 @@ class Member(Person):
         self.services = services 
 
 class MemberSchema(PersonSchema):
-    services = fields.List(fields.Str())
+    services = fields.Nested('MemberServiceSchema', many=True)
             
     @post_load
     def make_member(self, data, **kwargs):

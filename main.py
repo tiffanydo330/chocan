@@ -14,12 +14,17 @@ def read_json(filename):
     return data
 
 def main():
-    member1services = [MemberService("01-01-2001", "provider1", "service")]
-    member2services = [MemberService("01-01-2001", "provider2", "service")]
+    date_string1 = '01-01-2001'
+    date_obj = datetime.strptime(date_string1, '%m-%d-%Y')
+    datetime_string1 = '01-02-2001 07:56:30'
+    datetime_obj = datetime.strptime(datetime_string1, '%m-%d-%Y %H:%M:%S')
 
-    provider1services = [ProviderService("01-01-2001", "01-01-2001 07:56:30", 
+    member1services = [MemberService(date_obj, "provider1", "service")]
+    member2services = [MemberService(date_obj, "provider2", "service")]
+    
+    provider1services = [ProviderService(date_obj, datetime_obj, 
                                         "jon", "001", "7", 5000)]
-    provider2services = [ProviderService("01-01-2001", "01-01-2001 07:56:30", 
+    provider2services = [ProviderService(date_obj, datetime_obj, 
                                         "jane", "002", "7", 5000)]
     members = [
         Member("Member1", "001", "member 1 street", "member1 town", "OR", "89019",

@@ -8,16 +8,16 @@
 		"zip_code": "54321",
 		"services": [
 			{
-				"date": "2024-02-20",
-				"date_and_time": "2024-02-20T09:00:00",
+				"date": "02-21-2024",
+				"date_and_time": "02-20-2024T09:00:00",
 				"member_name": "John Doe",
 				"member_number": "000001",
 				"service_code": "001",
 				"fee": 100.00
 			},
 			{
-				"date": "2024-02-21",
-				"date_and_time": "2024-02-21T10:00:00",
+				"date": "02-21-2024",
+				"date_and_time": "02-20-2024T10:00:00",
 				"member_name": "Jane Smith",
 				"member_number": "000002",
 				"service_code": "002",
@@ -36,16 +36,16 @@
 		"zip_code": "13579",
 		"services": [
 			{
-				"date": "2024-02-22",
-				"date_and_time": "2024-02-22T11:00:00",
+				"date": "02-21-2024",
+				"date_and_time": "02-20-2024T11:00:00",
 				"member_name": "Alice Brown",
 				"member_number": "003",
 				"service_code": "003",
 				"fee": 200.0
 			},
 			{
-				"date": "2024-02-23",
-				"date_and_time": "2024-02-23T13:00:00",
+				"date": "02-22-2024",
+				"date_and_time": "02-20-2024T13:00:00",
 				"member_name": "Bob White",
 				"member_number": "004",
 				"service_code": "004",

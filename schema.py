@@ -26,7 +26,7 @@ class ProviderSchema(PersonSchema):
         return Provider(**data)
 
 class ServiceSchema(Schema):
-    date = fields.Date()
+    date = fields.Date(format="%m-%d-%Y")
 
 class MemberServiceSchema(ServiceSchema):
     provider_name = fields.Str()
@@ -37,7 +37,7 @@ class MemberServiceSchema(ServiceSchema):
         return MemberService(**data)
 
 class ProviderServiceSchema(ServiceSchema):
-    date_and_time = fields.DateTime()
+    date_and_time = fields.DateTime(format="%m-%d-%YT%H:%M:%S")
     member_name = fields.Str()
     member_number = fields.Str()
     service_code = fields.Str()

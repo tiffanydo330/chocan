@@ -1,37 +1,46 @@
 import json
 from data import Member, Provider
 from schema import MemberSchema, ProviderSchema
+# for data type declaration or whatever
+from typing import Dict, Any
 
 def load_data_from_json(filename):
-    with open(filename, 'r') as file:
-        data = json.load(file)
-    return data
+    try:
+        with open(filename, 'r') as file:
+            data = json.load(file)
+        return data
+    except FileNotFoundError:
+        print(f"Error: File '{filename}' not found.")
+        return None
+    except Exception as e:
+        print(f"Error writing data to'{filename}': {e}")
+        return None
 
 def write_data_to_json(data, filename):
-    with open(filename, 'w') as file:
-        json.dump(data, file, indent=4)
+    try:
+        with open(filename, 'w') as file:
+            json.dump(data, file, indent=4)
+    except Exception as e:
+        print(f"Error writing data to'{filename}': {e}")
 
-def main():
+# the expression -> None means main returns nothing
+def main() -> None:
     # Load data from JSON file
     member_data = load_data_from_json('members.json')
     provider_data = load_data_from_json('providers.json')
-
-    # Deserialize data
-    member_schema = MemberSchema(many=True)
-    provider_schema = ProviderSchema(many=True)
-    members = member_schema.load(member_data)
-    providers = provider_schema.load(provider_data)
     
-    # modifies data, should be fine with user input
-    #members[0].name = "New Name"
+    if member_data:
+        member_schema = MemberSchema(many=True)
+        members_dict: Dict[str, Member] = {member.id_num: member for member in member_schema.load(member_data)}
 
-    #members_dict = {member['id_num']: member for member in member_schema.load(member_data)}
-    #members_dict = {member.id_num: member for member in member_schema.load(member_data)}
-    #providers_dict = {provider.id_num: provider for provider in provider_schema.load(provider_data)}
-    #members_dict["001"].name = "New Name"
-    
+    if provider_data:
+        provider_schema = ProviderSchema(many=True)
+        providers_dict: Dict[str, Member] = {provider.id_num: provider for provider in provider_schema.load(provider_data)}
+
+    members_dict["000001"].name = "New Name"
+
     print("Modified Members:")
-    for member in members:
+    for id_num, member in members_dict.items():
         print("Name:", member.name)
         print("ID:", member.id_num)
         print("Services:")
@@ -40,12 +49,10 @@ def main():
             print("- Provider Name:", service.provider_name)
             print("- Service Name:", service.service_name)
         print()
-    #write_data_to_json(list(members_dict.values()), 'members_modified.json')
-    #write_data_to_json(list(providers_dict.values()), 'providers_modified.json')
 
-    # write data back to JSON files
-    write_data_to_json(member_schema.dump(members), 'members_modified.json')
-    write_data_to_json(provider_schema.dump(providers), 'providers_modified.json')
+    #write data back to JSON
+    write_data_to_json(member_schema.dump(list(members_dict.values())), 'members_modified.json')
+    write_data_to_json(provider_schema.dump(list(providers_dict.values())), 'providers_modified.json')
 
 if __name__ == "__main__":
     main()

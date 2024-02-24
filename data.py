@@ -35,12 +35,10 @@ class MemberService(Service):
 
 class ProviderService(Service):
     def __init__(self, date, date_and_time, member_name, member_number, service_code,
-                 fee, num_consultations, total_fee):
+                 fee):
         super().__init__(date)
         self.date_and_time = date_and_time
         self.member_name = member_name
         self.member_number = member_number
         self.service_code = service_code
         self.fee = fee
-        self.num_consultations = num_consultations
-        self.total_fee = total_fee

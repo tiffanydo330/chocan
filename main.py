@@ -23,8 +23,13 @@ def main():
     providers = provider_schema.load(provider_data)
     
     # modifies data, should be fine with user input
-    members[0].name = "New Name"
+    #members[0].name = "New Name"
 
+    #members_dict = {member['id_num']: member for member in member_schema.load(member_data)}
+    #members_dict = {member.id_num: member for member in member_schema.load(member_data)}
+    #providers_dict = {provider.id_num: provider for provider in provider_schema.load(provider_data)}
+    #members_dict["001"].name = "New Name"
+    
     print("Modified Members:")
     for member in members:
         print("Name:", member.name)
@@ -35,6 +40,8 @@ def main():
             print("- Provider Name:", service.provider_name)
             print("- Service Name:", service.service_name)
         print()
+    #write_data_to_json(list(members_dict.values()), 'members_modified.json')
+    #write_data_to_json(list(providers_dict.values()), 'providers_modified.json')
 
     # write data back to JSON files
     write_data_to_json(member_schema.dump(members), 'members_modified.json')

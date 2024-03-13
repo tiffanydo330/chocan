@@ -1,0 +1,27 @@
+[
+    {
+        "service_code": "001",
+        "name": "General Consultation",
+        "cost": 1500.99
+    },
+    {
+        "service_code": "002",
+        "name": "Dental Cleaning",
+        "cost": 800.99
+    },
+    {
+        "service_code": "003",
+        "name": "X-ray Imaging",
+        "cost": 2000.5
+    },
+    {
+        "service_code": "004",
+        "name": "Blood Test",
+        "cost": 5000.99
+    },
+    {
+        "service_code": "005",
+        "name": "Vaccination",
+        "cost": 2000.99
+    }
+]

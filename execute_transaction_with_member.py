@@ -8,7 +8,7 @@ def validate_member_id(member_data):
     return True, "All member IDs are VALID"
 
 # Load the member data from a JSON file
-with open('member.json', 'r') as f:
+with open('members.json', 'r') as f:
     member_data = json.load(f)
 
 # Validate the member IDs

@@ -56,7 +56,7 @@ def main() -> None:
 
     if provider_data:
         provider_schema = ProviderSchema(many=True)  # Create a schema for provider data
-        providers_dict: Dict[str, Member] = {provider.id_num: provider for provider in provider_schema.load(provider_data)}
+        providers_dict: Dict[str, Provider] = {provider.id_num: provider for provider in provider_schema.load(provider_data)}
 
     # Modify data
     members_dict["000001"].name = "New Name"

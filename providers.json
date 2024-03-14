@@ -1,6 +1,6 @@
 [
 	{
-		"name": "Dr. Smith",
+		"name": "Dr Smith",
 		"id_num": "100001",
 		"street": "789 Elm St",
 		"city": "Anycity",
@@ -28,7 +28,7 @@
 		"total_wk_fee": 250.00
 	},
 	{
-		"name": "Dr. Johnson",
+		"name": "Dr Johnson",
 		"id_num": "100002",
 		"street": "987 Pine St",
 		"city": "Othercity",

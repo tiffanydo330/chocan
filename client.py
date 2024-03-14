@@ -3,6 +3,13 @@
 
 import sys
 import time
+from services import ServiceManager
+from report_generator import ReportGenerator
+import Carl_Swin
+from main import load_data_from_json
+from data import Member, Provider  # Importing custom data models
+from schema import MemberSchema, ProviderSchema  # Importing schemas for data serialization
+from typing import Dict, Any  # Importing type hints for data types
 
 MP_ID_MAX = 9
 S_ID_MAX = 6
@@ -15,20 +22,41 @@ class Client:
     #   - service billing class
     #   - report generator class
     def __init__(self):
-        # To be filled in upon module completion:
-        # self.__mp_management = MemberProviderManagement()
-        # self.__service_billding = ServiceBilling()
-        # self.__report_generator = ReportGenerator()
-        pass
+        self.__service_manager = ServiceManager("services.json")
+        self.__service_manager.load_services()
+        self.__report_generator = ReportGenerator()
+
+        # What follows is from main! Next, this will be maintained within its own class
+        # Load data from JSON files
+        self.__member_data = load_data_from_json('members.json')
+        self.__provider_data = load_data_from_json('providers.json')
+
+        # Deserialize JSON data into dictionaries
+        if self.__member_data:
+            self.__member_schema = MemberSchema(many=True)  # Create a schema for member data
+            self.__members_dict: Dict[str, Member] = {member.id_num: member for member in self.__member_schema.load(self.__member_data)}
+
+        if self.__provider_data:
+            self.__provider_schema = ProviderSchema(many=True)  # Create a schema for provider data
+            self.__providers_dict: Dict[str, Provider] = {provider.id_num: provider for provider in self.__provider_schema.load(self.__provider_data)}
+            print(self.__providers_dict)
+            # To be filled in upon module completion:
+            # self.__mp_management = MemberProviderManagement()
+    
+    def __del__(self):
+        self.__service_manager.save_services()
     
     # main_menu_loop function is Client's only public function
     # is called by main() upon startup to offer initial menu options
     # gives Provider, Manager, and Exit options
     def main_menu_loop(self):
         while True:
+            print("\nMain Menu")
+            print("----------")
             print("1. Access Provider Menu")
             print("2. Access Manager Menu")
             print("0. Exit")
+            print("----------\n")
             option = self.__int_input(1)
             match option:
                 case 1:
@@ -48,10 +76,13 @@ class Client:
         # my concern is, when TA is testing, they'll have to go into the provider file to access this menu
         # maybe move provider validation for viewing specific weekly reports? IDK
         while True:
+            print("\nProvider Menu")
+            print("----------")
             print("1. Provide service to Member")
             print("2. Display provider directory")
             print("3. View weekly report")
             print("0. Exit")
+            print("----------\n")
             option = self.__int_input(1)
             match option:
                 case 1:
@@ -74,8 +105,11 @@ class Client:
                         comment = self.__string_input(COMMENT_MAX)
 
                     # Now, write information to current provider entry (or maybe to disk? not sure on this one)
-                #case 2: 
-                    # Ask self.__mp_management to display provider directory
+                case 2: 
+                    print("\nServices offered:")
+                    print("----------")
+                    self.__service_manager.display_services()
+                    print("----------\n")
                 #case 3:
                     # Check if a report has been written
                     # if so, display
@@ -90,17 +124,30 @@ class Client:
     # gives Generate Reports, Access Members, Access Providers, and Exit menu options
     def __manager_menu_loop(self):
         while True:
+            print("\nManager Menu")
+            print("----------")
             print("1. Manage Members")
             print("2. Manage Providers")
             print("3. Generate Weekly Reports")
             print("0. Exit")
+            print("----------\n")
             option = self.__int_input(1)
             match option:
                 case 1:
                     self.__manage_members_loop()
                 case 2:
                     self.__manage_providers_loop()
-                #case 3:
+                case 3:
+                    for provider in self.__providers_dict.values():
+                        self.__report_generator.generate_provider_report(provider, provider.services)
+
+                    for member in self.__members_dict.values():
+                        self.__report_generator.generate_member_report(member, member.services)
+
+                    # Need to rename, make class
+                    Carl_Swin.sum_rep_main(self.__providers_dict)
+
+                    # Old comments, maybe still relevant
                     # Ask self.__report_generator to generate week's reports
                     # Maybe we pass in self.__mp_managemnet as an arg?
                     # Alternatively, ManagerProviderManagemnt class could contain an instnace of ReportGenerator
@@ -115,10 +162,13 @@ class Client:
     # gives Add, Remove, Update, Exit options
     def __manage_members_loop(self):
         while True:
+            print("\nManaging Members")
+            print("----------")
             print("1. Add Member")
             print("2. Delete Member")
             print("3. Update Member")
             print("0. Exit")
+            print("----------\n")
             option = self.__int_input(1)
             match option:
                 #case 1: 
@@ -147,10 +197,13 @@ class Client:
     # gives Add, Remove, Update, Exit options
     def __manage_providers_loop(self):
         while True:
+            print("\nManaging Providers")
+            print("----------")
             print("1. Add Member")
             print("2. Delete Member")
             print("3. Update Member")
             print("0. Exit")
+            print("----------\n")
             option = self.__int_input(1)
             match option:
                 #case 1: 

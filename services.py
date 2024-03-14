@@ -32,3 +32,10 @@ class ServiceManager:
     def save_services(self):
         with open(self.file_path, 'w') as file:
             json.dump(self.services, file, indent=4)
+
+    #def main():
+    #    sm = ServiceManager("services.json")
+    #    sm.display_services()
+    #
+    #if __name__ == "__main__":
+    #    main()

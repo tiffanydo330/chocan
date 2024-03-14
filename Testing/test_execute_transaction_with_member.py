@@ -4,7 +4,7 @@ import pytest
 from unittest.mock import patch
 
 # Assuming your functions are in a file named 'main.py'
-from main import validate_member_id, get_provider_info, get_service_details, get_summary_info, add_new_member
+from execute_transaction_with_member import validate_member_id, get_provider_info, get_service_details, get_summary_info, add_new_member
 '''
 Execute transaction with member
 	- Validate member ID

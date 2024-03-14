@@ -52,3 +52,39 @@ class ReportGenerator:
         except Exception as e:
             print(f"An error occurred while generating the report for provider {provider.name}: {e}")
             return None
+        
+    # to generate the provider report and put it into a json file
+    def generate_member_report(self, member, member_services):
+        if not member.name or not member.name.strip() or not member.name.replace(" ", "").isalpha():  # all reports must at least have the provider name and name must be valid
+            print("Invalid provider name. Unable to generate report.")
+            return None
+
+        try:
+            report_data = {
+                "Member Name": self.format_provider_field(member.name, 25),
+                "Member Number": self.format_provider_field(member.id_num, 9, is_numeric=True),
+                "Member Street Address": self.format_provider_field(member.street, 25),
+                "Member City": self.format_provider_field(member.city, 14),
+                "Member State": self.format_provider_field(member.state, 2),
+                "Member Zip Code": self.format_provider_field(member.zip_code, 5, is_numeric=True),
+                "Services": [],
+                "Total Number of Consultations": self.format_provider_field(len(member_services), 3, is_numeric=True),
+            }
+
+            # for the services array 
+            for service in member_services:
+                service_data = {
+                    "Date of Service": self.format_provider_field(service.date, 10),
+                    "Provider Name": self.format_provider_field(service.provider_name, 25),
+                    "Service Name": self.format_provider_field(service.service_name, 20),
+                }
+                report_data["Services"].append(service_data)
+
+            file_name = f"{member.name.replace(' ', '_')}.json"
+            with open(file_name, 'w') as json_file:
+                json.dump(report_data, json_file, indent=4)
+
+            return file_name
+        except Exception as e:
+            print(f"An error occurred while generating the report for provider {provider.name}: {e}")
+            return None

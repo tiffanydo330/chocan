@@ -140,7 +140,10 @@ class Client:
                 case 3:
                     for provider in self.__providers_dict.values():
                         self.__report_generator.generate_provider_report(provider, provider.services)
-                    
+
+                    for member in self.__members_dict.values():
+                        self.__report_generator.generate_member_report(member, member.services)
+
                     # Need to rename, make class
                     Carl_Swin.sum_rep_main(self.__providers_dict)
 

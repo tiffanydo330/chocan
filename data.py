@@ -14,6 +14,7 @@ class Member(Person):
     def __init__(self, name, id_num, street, city, state, zip_code, services):
         super().__init__(name, id_num, street, city, state, zip_code)
         self.services = services
+        self.status = "valid"
 
 class Provider(Person):
     def __init__(self, name, id_num, street, city, state, zip_code,

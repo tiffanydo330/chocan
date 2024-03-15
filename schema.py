@@ -11,6 +11,7 @@ class PersonSchema(Schema):
 
 class MemberSchema(PersonSchema):
     services = fields.List(fields.Nested("MemberServiceSchema"))
+    status = fields.Str()
 
     @post_load
     def make_member(self, data, **kwargs):

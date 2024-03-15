@@ -8,8 +8,6 @@ from schema import MemberSchema, ProviderSchema  # Importing schemas for data se
 
 class DataManager:
     def __init__(self):
-        #self.__members = members
-        #self.__providers = providers
         self.__member_data = self.load_data_from_json('members.json')
         self.__provider_data = self.load_data_from_json('providers.json')
 
@@ -57,22 +55,22 @@ class DataManager:
             return 1
 
     def remove_provider(self, provider_id: str) -> None:
-        if provider_id in self.providers:
-            del self.providers[provider_id]
+        if provider_id in self.__providers_dict:
+            del self.__providers_dict[provider_id]
             return 0
         else:
             return 1
 
     def modify_member(self, member_id: str, new_member_data: Member) -> None:
-        if member_id in self.members:
-            self.members[member_id] = new_member_data
+        if member_id in self.__members_dict:
+            self.__members_dict[member_id] = new_member_data
             return 0
         else:
             return 1
 
     def modify_provider(self, provider_id: str, new_provider_data: Provider) -> None:
-        if provider_id in self.providers:
-            self.providers[provider_id] = new_provider_data
+        if provider_id in self.__providers_dict:
+            self.__providers_dict[provider_id] = new_provider_data
             return 0
         else:
             return 1
@@ -111,11 +109,3 @@ class DataManager:
         self.write_to_json(self.__provider_schema.dump(list(self.__providers_dict.values())), 'providers_modified.json')
 
     
-        
-
-
-
-
-
-
-

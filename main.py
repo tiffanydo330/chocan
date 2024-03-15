@@ -8,8 +8,6 @@ def main() -> None:
     """
     The main function of the program.
     """
-    # Modify data
-    #members_dict["000001"].name = "New Name"
 
     client = Client()
     client.main_menu_loop()

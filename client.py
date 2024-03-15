@@ -6,9 +6,7 @@ import time
 from services import ServiceManager
 from report_generator import ReportGenerator
 import Carl_Swin
-#from main import load_data_from_json
 from data import Member, Provider  # Importing custom data models
-#from schema import MemberSchema, ProviderSchema  # Importing schemas for data serialization
 from typing import Dict, Any  # Importing type hints for data types
 from data_management import DataManager
 
@@ -28,24 +26,6 @@ class Client:
         self.__report_generator = ReportGenerator()
         self.__data_manager = DataManager()
 
-        # What follows is from main! Next, this will be maintained within its own class
-        # Load data from JSON files
-        #self.__member_data = load_data_from_json('members.json')
-        #self.__provider_data = load_data_from_json('providers.json')
-
-        # Deserialize JSON data into dictionaries
-        #if self.__member_data:
-            #self.__member_schema = MemberSchema(many=True)  # Create a schema for member data
-            #self.__members_dict: Dict[str, Member] = {member.id_num: member for member in self.__member_schema.load(self.__member_data)}
-
-        #if self.__provider_data:
-            #self.__provider_schema = ProviderSchema(many=True)  # Create a schema for provider data
-            #self.__providers_dict: Dict[str, Provider] = {provider.id_num: provider 
-                    #for provider in self.__provider_schema.load(self.__provider_data)}
-            #print(self.__providers_dict)
-            # To be filled in upon module completion:
-            # self.__mp_management = MemberProviderManagement()
-    
     def __del__(self):
         self.__service_manager.save_services()
     
@@ -53,10 +33,14 @@ class Client:
     # is called by main() upon startup to offer initial menu options
     # gives Provider, Manager, and Exit options
 
-    def cheeky_print(self, dictionary):
+    def test_print(self, dictionary):
         for id_num, member in dictionary.items():
             print("Name:", member.name)
             print("ID:", member.id_num)
+            print("Street:", member.street)
+            print("City:", member.city)
+            print("State:", member.state)
+            print("Zip Code:", member.zip_code)
             print("Services:")
             for service in member.services:
                 print("- Date:", service.date)
@@ -206,8 +190,7 @@ class Client:
                                              temp_state, temp_zip, services = [])
                     self.__data_manager.add_member(temp_id, new_member_data)
                     print("Member added!\n")
-                    self.cheeky_print(self.__data_manager.get_member_dict()) #TODO delete
-                    break
+                    self.test_print(self.__data_manager.get_member_dict()) #TODO delete
 
                 case 2:
                     # Prompt for Member name/id
@@ -219,8 +202,8 @@ class Client:
                         print(f"{id_to_delete} not found!\n") # TODO better error handling
                         break
                     else:
-                        print("{id_to_delete} deleted!\n")
-                    self.cheeky_print(self.__data_manager.get_member_dict()) #TODO delete
+                        print(f"{id_to_delete} deleted!\n")
+                    self.test_print(self.__data_manager.get_member_dict()) #TODO delete
                         
                 case 3:
                     # Not sure about this one -
@@ -229,19 +212,17 @@ class Client:
                     print("Member ID to modify?: ")
                     id_to_modify = self.__string_input(9)
                     
-                    temp_member = get_member(id_to_modify)
+                    temp_member = self.__data_manager.get_member(id_to_modify)
                     if (temp_member == None):
-                        print("{id_to_modify} nt found!\n")
+                        print(f"{id_to_modify} not found!\n")
                         break
                     # Prompt for what to change and how
                     self.__modify_menu(id_to_modify, temp_member)
-                    self.__data_manager.modify_member(temp_member) 
+                    self.__data_manager.modify_member(temp_member.id_num, temp_member) 
                     # Send to self.__mp_management for update
                     # If can't find, error
                     # If change N/A, error
-                    self.cheeky_print(self.__data_manager.get_member_dict()) #TODO delete
-                    :wa
-                    break
+                    self.test_print(self.__data_manager.get_member_dict()) #TODO delete
                 case 0:
                     break
                 case _:
@@ -282,6 +263,49 @@ class Client:
                 case _:
                     print(f"Error: invalid option {option}")
         return
+
+    def __modify_menu(self, id_num, person_to_modify):
+        while True:
+            print(f"\nModifying {id_num}")
+            print("----------")
+            print(f"1. Change Name        ({person_to_modify.name})")
+            print(f"2. Change ID Number   ({person_to_modify.id_num})")
+            print(f"3. Change Street      ({person_to_modify.street}) ")
+            print(f"4. Change City        ({person_to_modify.city})")
+            print(f"5. Change State       ({person_to_modify.state})")
+            print(f"6. Change Zip Code    ({person_to_modify.zip_code})")
+            print(f"7. Modify Services") # TODO Coming soon!!! (tm)
+            print("0. Exit")
+            print("----------\n")
+            option = self.__int_input(1)
+            match option:
+                case 1:
+                    print("New Name?: ")
+                    person_to_modify.name = self.__string_input(80)
+                case 2:
+                    print("New ID?: ")
+                    person_to_modify.id_num = self.__string_input(9)
+                case 3:
+                    print("New Street?: ")
+                    person_to_modify.street = self.__string_input(100)
+                case 4:
+                    print("New City?: ")
+                    person_to_modify.city = self.__string_input(100)
+                case 5:
+                    print("New State?: ")
+                    person_to_modify.state = self.__string_input(100)
+                case 6:
+                    print("New Zip Code?: ")
+                    person_to_modify.zip_code = self.__string_input(9)
+                case 7:
+                    # TODO maybe modify services too? add/delete/modify
+                    break
+                case 0:
+                    break
+                case _:
+                    print(f"Error: invalid option {option}")
+        return
+
 
     # bool_input as a helper function for recieving boolean input
     # Provides reusable input option with error handling 

@@ -1,10 +1,15 @@
 import json
+#import Client
 
 def validate_member_id(member_data):
     valid_ids = ["000001", "000002"]  # Replace with the actual list of valid IDs
     for member in member_data:
-        if member["id_num"] not in valid_ids:
-            return False, f"Invalid ID: {member['id_num']} for member: {member['name']}"
+        try:
+            id_num = int(member["id_num"])
+            if str(id_num).zfill(6) not in valid_ids:
+                return False, f"Invalid ID: {member['id_num']} for member: {member['name']}"
+        except ValueError:
+            return False, f"ID: {member['id_num']} for member: {member['name']} is not a valid integer"
     return True, "All member IDs are VALID"
 
 # Load the member data from a JSON file
@@ -16,24 +21,38 @@ is_valid, message = validate_member_id(member_data)
 print(message)
 
 # Input functions for provider after a service
-def get_provider_info():
-    provider_name = input("Enter Provider Name: ")
-    provider_number = input("Enter Provider Number: ")
-    provider_address = input("Enter Provider Address (Street, City, State, Zip Code): ")
+def get_provider_info(self):
+    print("Enter Provider Name: ")
+    provider_name = self.__string_input(100)  # Assuming max length of 100 characters
+    print("Enter Provider Number: ")
+    provider_number = self.__string_input(10)  # Assuming max length of 10 characters
+    print("Enter Provider Address (Street, City, State, Zip Code): ")
+    provider_address = self.__string_input(200)  # Assuming max length of 200 characters
     return provider_name, provider_number, provider_address
 
-def get_service_details():
-    date_of_service = input("Enter Date of Service (MM-DD-YYYY): ")
-    date_time_received = input("Enter Date and Time Data Received by the Computer (MM-DD-YYYY HH:MM:SS): ") #DB
-    member_name = input("Enter Member Name: ")
-    member_number = input("Enter Member Number: ")
-    service_code = input("Enter Service Code: ")
-    fee_to_be_paid = input("Enter Fee to be Paid: ") # $999.99 is the max
+# Input function for service details
+def get_service_details(self):
+    print("Enter Date of Service (MM-DD-YYYY): ")
+    date_of_service = self.__string_input(10)  # Assuming max length of 10 characters for date format MM-DD-YYYY
+    print("Enter Date and Time Data Received by the Computer (MM-DD-YYYY HH:MM:SS): ") 
+    date_time_received = self.__string_input(19)  # Assuming max length of 19 characters for date time format MM-DD-YYYY HH:MM:SS
+    print("Enter Member Name: ")
+    member_name = self.__string_input(50)  # Assuming max length of 50 characters for member name
+    print("Enter Member Number: ")
+    member_number = self.__string_input(10)  # Assuming max length of 10 characters for member number
+    print("Enter Service Code: ")
+    service_code = self.__string_input(10)  # Assuming max length of 10 characters for service code
+    print("Enter Fee to be Paid: ") # $999.99 is the max
+    fee_to_be_paid = self.__float_input(7)  # Assuming max length of 7 characters for fee to be paid format $999.99
     return date_of_service, date_time_received, member_name, member_number, service_code, fee_to_be_paid
 
-def get_summary_info():
-    total_consultations = input("Enter Total Number of Consultations with Members (3 digits): ")
-    total_fee = input("Enter Total Fee for the Week: ") # $99,999.99 is the max
+    # __float_input() IS WRITTEN AT THE BOTTOM OF THIS FILE. IT IS COMMENTED OUT
+
+def get_summary_info(self):
+    print("Enter Total Number of Consultations with Members (3 digits): ")
+    total_consultations = self.__int_input(3)  # Assuming max length of 3 digits for total consultations
+    print("Enter Total Fee for the Week: ") # $99,999.99 is the max
+    total_fee = self.__float_input(9)  # Assuming max length of 9 characters for total fee format $99,999.99
     return total_consultations, total_fee
 
 # Example of using the functions in main 
@@ -51,14 +70,14 @@ if __name__ == "__main__":
 '''
 
 # Input function for adding a new memebr
-def add_new_member():
+def add_new_member(self):
     # Get the new member's details
-    name = input("Enter Member Name: ")
-    id_num = input("Enter Member ID Number: ")
-    street = input("Enter Member Street Address: ")
-    city = input("Enter Member City: ")
-    state = input("Enter Member State: ")
-    zip_code = input("Enter Member Zip Code: ")
+    name = self.__string_input(50)  # Assuming max length of 50 characters for name
+    id_num = self.__string_input(10)  # Assuming max length of 10 characters for ID number
+    street = self.__string_input(100)  # Assuming max length of 100 characters for street address
+    city = self.__string_input(50)  # Assuming max length of 50 characters for city
+    state = self.__string_input(2)  # Assuming max length of 2 characters for state
+    zip_code = self.__string_input(5)  # Assuming max length of 5 characters for zip code
     services = []  # You can modify this part to add services if needed
 
     new_member = {
@@ -88,4 +107,20 @@ def add_new_member():
 
 if __name__ == "__main__":
     add_new_member()
+'''
+# HENRY HERE IS THE FLOAT TEST I PUT IT HERE SO I WOULDN'T
+# ACCIDENTALLY BREAK THE client.py FILE
+'''
+# float_input as a helper function for recieving float input of length size
+# Privdes reuasble input option with error handling
+def __float_input(self, size) -> float:
+    number: float
+    while True:
+        try:
+            number = float(self.__string_input(size))
+        except ValueError as msg:
+            print(f"Error: {msg}", file = sys.stderr)
+            print("Please re-enter:", file = sys.stderr)
+        else: break
+    return number
 '''

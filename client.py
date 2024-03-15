@@ -10,6 +10,7 @@ from main import load_data_from_json
 from data import Member, Provider  # Importing custom data models
 from schema import MemberSchema, ProviderSchema  # Importing schemas for data serialization
 from typing import Dict, Any  # Importing type hints for data types
+from data_management import DataManager
 
 MP_ID_MAX = 9
 S_ID_MAX = 6
@@ -38,10 +39,13 @@ class Client:
 
         if self.__provider_data:
             self.__provider_schema = ProviderSchema(many=True)  # Create a schema for provider data
-            self.__providers_dict: Dict[str, Provider] = {provider.id_num: provider for provider in self.__provider_schema.load(self.__provider_data)}
+            self.__providers_dict: Dict[str, Provider] = {provider.id_num: provider 
+                    for provider in self.__provider_schema.load(self.__provider_data)}
             print(self.__providers_dict)
             # To be filled in upon module completion:
             # self.__mp_management = MemberProviderManagement()
+        self.__data_manager = DataManager(self.get_member_dict(), 
+                                          self.get_provider_dict())
     
     def __del__(self):
         self.__service_manager.save_services()
@@ -49,6 +53,13 @@ class Client:
     # main_menu_loop function is Client's only public function
     # is called by main() upon startup to offer initial menu options
     # gives Provider, Manager, and Exit options
+
+    def get_member_dict(self):
+        return self.__members_dict
+
+    def get_provider_dict(self):
+        return self.__providers_dict
+
     def main_menu_loop(self):
         while True:
             print("\nMain Menu")
@@ -171,12 +182,34 @@ class Client:
             print("----------\n")
             option = self.__int_input(1)
             match option:
-                #case 1: 
+                case 1: 
                     # Prompt for all relevant member data
                     # Construct new Member instance with said data
                     # Send to self.__mp_management for addition
+                    print("Full Name?: ")
+                    temp_name = self.__string_input(80)
+                    print("ID Number?: ")
+                    temp_id = self.__string_input(6)
+                    print("Street Address?: ")
+                    temp_street = self.__string_input(100)
+                    print("City?: ")
+                    temp_city = self.__string_input(100)
+                    print("State? (Full): ")
+                    temp_state = self.__string_input(100)
+                    print("Zip Code?: ")
+                    temp_zip = self.__string_input(9)
+                    new_member_data = Member(temp_name, temp_id, temp_street, temp_city,
+                                             temp_state, temp_zip, services = [])
+                    self.__data_manager.add_member(temp_id, new_member_data)
+                    print("Member added!\n")
+                    #TODO jaden: maybe i should add "Services?" and take input for that too?
+
                 #case 2:
                     # Prompt for Member name/id
+                    print("Member ID to delete?: ")
+                    id_to_delete = self.__string_input(6)
+                    #if (self.data_manager.remove_member(id_to_delete) == 0)
+                        
                     # Send to self.__mp_managment for deletion
                     # If can't find, error
                 #case 3:
@@ -199,9 +232,9 @@ class Client:
         while True:
             print("\nManaging Providers")
             print("----------")
-            print("1. Add Member")
-            print("2. Delete Member")
-            print("3. Update Member")
+            print("1. Add Provider")
+            print("2. Delete Provider")
+            print("3. Update Provider")
             print("0. Exit")
             print("----------\n")
             option = self.__int_input(1)

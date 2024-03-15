@@ -5,6 +5,7 @@ from data import Member, Provider, MemberService, ProviderService
 # Display total amount of services for the week with the following info for each provider: provider name, provider number, and the amount to be transferred
 # Since this data is the same as EFT data, also create EFT files each including provider name, provider number, and the amount to be transferred
 
+# Call this function in main where every you need it to generate Summary Reports and EFT files
 def sum_rep_main(providers_dict):
     total_wk_fee = 0
     Dir = make_dir("EFT")
@@ -26,6 +27,7 @@ def sum_rep_main(providers_dict):
 
     return 0
 
+# Create EFT files and write data to them
 def EFT_file(DestPath, Prov, id_num, TotalFD):
     Dest = pathlib.Path(str(DestPath) + "/" + str(id_num))
 
@@ -59,6 +61,7 @@ def print_format(id_num, Prov):
         print("Unable to display for provider ID:", id_num)
         return 1
 
+# Creates the EFT directory to store all the EFT files
 def make_dir(DirStr):
     try:
         os.makedirs(DirStr, exist_ok=True)

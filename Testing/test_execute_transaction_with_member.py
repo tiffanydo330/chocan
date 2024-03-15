@@ -1,6 +1,5 @@
 import pytest
 import json
-import pytest
 from unittest.mock import patch
 
 # Assuming your functions are in a file named 'main.py'

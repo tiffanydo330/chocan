@@ -63,14 +63,17 @@ class DataManager:
 
     def modify_member(self, member_id: str, new_member_data: Member) -> None:
         if member_id in self.__members_dict:
-            self.__members_dict[member_id] = new_member_data
+            self.remove_member(member_id)
+            #self.__members_dict[member_id] = new_member_data
+            self.add_member(new_member_data.id_num, new_member_data)
             return 0
         else:
             return 1
 
     def modify_provider(self, provider_id: str, new_provider_data: Provider) -> None:
         if provider_id in self.__providers_dict:
-            self.__providers_dict[provider_id] = new_provider_data
+            self.remove_provider(provider_id)
+            self.add_provider(new_provider_data.id_num, new_provider_data)
             return 0
         else:
             return 1

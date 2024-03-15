@@ -12,3 +12,8 @@
 ### c. DON'T MERGE UNTIL WE AGREE AS A GROUP
 ## 5. After merge, do:
 ### a. git pull [name_from_step3] main
+
+#		--- TO RUN TESTS IN THE TESTING DIRECTORY---
+#linux: run this command in your terminal: export PYTHONPATH=/path/to/chocan:$PYTHONPATH
+#replacing /path/to/chocan to the path to the chocan directory on your system then
+#run pytest as normal from the chcoan directory: ie. pytest Testing/example_test

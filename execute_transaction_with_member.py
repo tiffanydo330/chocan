@@ -1,5 +1,5 @@
 import json
-import Client
+import client
 
 def validate_member_id(member_data):
     valid_ids = ["000001", "000002"]  # Replace with the actual list of valid IDs

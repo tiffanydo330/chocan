@@ -31,7 +31,7 @@ class Client:
     # main_menu_loop function is Client's only public function
     # is called by main() upon startup to offer initial menu options
     # gives Provider, Manager, and Exit options
- 
+
     def main_menu_loop(self):
         while True:
             print("\nMain Menu")
@@ -153,7 +153,7 @@ class Client:
                     print("Full Name?: ")
                     temp_name = self.__string_input(80)
                     print("ID Number?: ")
-                    temp_id = self.__string_input(9)
+                    temp_id = self.__string_input(6)
                     print("Street Address?: ")
                     temp_street = self.__string_input(100)
                     print("City?: ")
@@ -171,7 +171,7 @@ class Client:
                 case 2:
                     # Prompt for Member name/id
                     print("Member ID to delete?: ")
-                    id_to_delete = self.__string_input(9)
+                    id_to_delete = self.__string_input(6)
                     # Send to self.__mp_managment for deletion
                     # If can't find, error
                     if (self.__data_manager.remove_member(id_to_delete) == 1):
@@ -186,7 +186,7 @@ class Client:
                     # Possibly need another function for menu to give options on WHAT to update
                     # Prompt for Member name/id
                     print("Member ID to modify?: ")
-                    id_to_modify = self.__string_input(9)
+                    id_to_modify = self.__string_input(6)
                     
                     temp_member = self.__data_manager.get_member(id_to_modify)
                     if (temp_member == None):
@@ -194,7 +194,7 @@ class Client:
                         break
                     # Prompt for what to change and how
                     self.__modify_menu(id_to_modify, temp_member)
-                    self.__data_manager.modify_member(temp_member.id_num, temp_member) 
+                    self.__data_manager.modify_member(id_to_modify, temp_member) 
                     # Send to self.__mp_management for update
                     # If can't find, error
                     # If change N/A, error
@@ -218,22 +218,67 @@ class Client:
             print("----------\n")
             option = self.__int_input(1)
             match option:
-                #case 1: 
+                case 1: 
                     # Prompt for all relevant provider data
                     # Construct new Provider instance with said data
                     # Send to self.__mp_management for addition
-                #case 2:
+                    print("Full Name?: ")
+                    temp_name = self.__string_input(80)
+                    print("ID Number?: ")
+                    temp_id = self.__string_input(6)
+                    print("Street Address?: ")
+                    temp_street = self.__string_input(100)
+                    print("City?: ")
+                    temp_city = self.__string_input(100)
+                    print("State? (Full): ")
+                    temp_state = self.__string_input(100)
+                    print("Zip Code?: ")
+                    temp_zip = self.__string_input(9)
+                    print("# of Consultations?: ")
+                    temp_consultations = self.__int_input(3)
+                    print("Total Weekly Fee?: ")
+                    temp_total = self.__float_input(11)
+                    new_provider_data = Provider(temp_name, temp_id, temp_street, 
+                            temp_city, temp_state, temp_zip, services = [],
+                            num_consultations = temp_consultations, 
+                            total_wk_fee = temp_total)
+                    self.__data_manager.add_provider(temp_id, new_provider_data)
+                    print("Provider added!\n")
+                    self.test_print(self.__data_manager.get_provider_dict()) #TODO delete
+                case 2:
                     # Prompt for Provider name/id
                     # Send to self.__mp_managment for deletion
                     # If can't find, error
-                #case 3:
+                    print("Provider ID to delete?: ")
+                    id_to_delete = self.__string_input(6)
+                    # Send to self.__mp_managment for deletion
+                    # If can't find, error
+                    if (self.__data_manager.remove_provider(id_to_delete) == 1):
+                        print(f"{id_to_delete} not found!\n") # TODO better error handling MAYBE... can probably just forget about it
+                        break
+                    else:
+                        print(f"{id_to_delete} deleted!\n")
+                    self.test_print(self.__data_manager.get_provider_dict()) #TODO delete
+                        
+                case 3:
                     # Not sure about this one -
                     # Possibly need another function for menu to give options on WHAT to update
                     # Prompt for Provider name/id
                     # Prompt for what to change and how
+                    print("Provider ID to modify?: ")
+                    id_to_modify = self.__string_input(6)
+                    
+                    temp_provider = self.__data_manager.get_provider(id_to_modify)
+                    if (temp_provider == None):
+                        print(f"{id_to_modify} not found!\n")
+                        break
+                    # Prompt for what to change and how
+                    self.__modify_menu(id_to_modify, temp_provider)
+                    self.__data_manager.modify_provider(id_to_modify, temp_provider) 
                     # Send to self.__mp_management for update
                     # If can't find, error
                     # If change N/A, error
+                    self.test_print(self.__data_manager.get_provider_dict()) #TODO delete
                 case 0:
                     break
                 case _:
@@ -241,8 +286,12 @@ class Client:
         return
 
     def __modify_menu(self, id_num, person_to_modify):
+        id_flag = 0
         while True:
-            print(f"\nModifying {id_num}")
+            if (id_flag > 0):
+                print(f"\nModifying ID: {person_to_modify.id_num}")
+            else:
+                print(f"\nModifying ID: {id_num}")
             print("----------")
             print(f"1. Change Name        ({person_to_modify.name})")
             print(f"2. Change ID Number   ({person_to_modify.id_num})")
@@ -251,6 +300,9 @@ class Client:
             print(f"5. Change State       ({person_to_modify.state})")
             print(f"6. Change Zip Code    ({person_to_modify.zip_code})")
             print(f"7. Modify Services") # TODO Coming soon!!! (tm)
+            if (isinstance(person_to_modify, Provider)):
+                    print(f"8. Change # of Consultations  ({person_to_modify.num_consultations})")
+                    print(f"9. Change Weekly Total Fee    ({person_to_modify.total_wk_fee})")
             print("0. Exit")
             print("----------\n")
             option = self.__int_input(1)
@@ -260,7 +312,8 @@ class Client:
                     person_to_modify.name = self.__string_input(80)
                 case 2:
                     print("New ID?: ")
-                    person_to_modify.id_num = self.__string_input(9)
+                    person_to_modify.id_num = self.__string_input(6)
+                    id_flag += 1
                 case 3:
                     print("New Street?: ")
                     person_to_modify.street = self.__string_input(100)
@@ -276,26 +329,51 @@ class Client:
                 case 7:
                     # TODO maybe modify services too? add/delete/modify
                     break
+                case 8 if isinstance(person_to_modify, Provider):
+                    print("New # of Consultations?: ")
+                    person_to_modify.num_consultations = self.__int_input(3)
+                case 9 if isinstance(person_to_modify, Provider):
+                    print("New Total Weekly Fee?: ")
+                    person_to_modify.total_wk_fee = self.__int_input(11)
                 case 0:
                     break
                 case _:
                     print(f"Error: invalid option {option}")
         return
 
-    def test_print(self, dictionary):
-        for id_num, member in dictionary.items():
-            print("Name:", member.name)
-            print("ID:", member.id_num)
-            print("Street:", member.street)
-            print("City:", member.city)
-            print("State:", member.state)
-            print("Zip Code:", member.zip_code)
-            print("Services:")
-            for service in member.services:
-                print("- Date:", service.date)
-                print("- Provider Name:", service.provider_name)
-                print("- Service Name:", service.service_name)
-            print()
+   def test_print(self, dictionary):
+        is_member = isinstance(next(iter(dictionary.values())), Member)
+        if is_member:
+            for id_num, member in dictionary.items():
+                print("Name:", member.name)
+                print("ID:", member.id_num)
+                print("Street:", member.street)
+                print("City:", member.city)
+                print("State:", member.state)
+                print("Zip Code:", member.zip_code)
+                print("Services:")
+                for service in member.services:
+                    print("- Date:", service.date)
+                    print("- Provider Name:", service.provider_name)
+                    print("- Service Name:", service.service_name)
+                print()
+        else:
+            for id_num, provider in dictionary.items():
+                print("Name:", provider.name)
+                print("ID:", provider.id_num)
+                print("Street:", provider.street)
+                print("City:", provider.city)
+                print("State:", provider.state)
+                print("Zip Code:", provider.zip_code)
+                print("Services:")
+                for service in provider.services:
+                    print("- Date & Time:", service.date_and_time)
+                    print("- Member Name:", service.member_name)
+                    print("- Member Number:", service.member_number)
+                    print("- Service Code:", service.service_code)
+                    print("- Fee:", service.fee)
+                print()
+
 
 
     # bool_input as a helper function for recieving boolean input
@@ -345,6 +423,20 @@ class Client:
             else: break
         return number 
 
+    # float_input as a helper function for recieving float input of length size
+    # Privdes reuasble input option with error handling
+    #CAREFUL with decimals here! they cound as +1 size
+    def __float_input(self, size) -> float:
+        number: float
+        while True:
+            try:
+                number = float(self.__string_input(size))
+            except ValueError as msg:
+                print(f"Error: {msg}", file=sys.stderr)
+                print("Please re-enter:", file=sys.stderr)
+            else:
+                break
+        return number
 
     # time_input as a helper function for recieving mm-dd-yyy input as a string
     # Provides reuasble input option with error handling

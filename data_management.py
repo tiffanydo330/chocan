@@ -4,10 +4,11 @@ import json  # Importing the json module to work with JSON data
 from typing import Dict
 from data import Member, Provider
 from schema import MemberSchema, ProviderSchema  # Importing schemas for data serialization
-
+from report_generator import ReportGenerator
 
 class DataManager:
     def __init__(self):
+        self.__report_generator = ReportGenerator()
         self.__member_data = self.load_data_from_json('members.json')
         self.__provider_data = self.load_data_from_json('providers.json')
 
@@ -77,7 +78,17 @@ class DataManager:
             return 0
         else:
             return 1
+   
+    def validate_member(self, member_id: str) -> str:
+        to_validate = self.members[member_id]
+        if not to_validate:
+            return "invalid"
+        else:
+            return to_validate.status
 
+    def retrieve_member(self, member_id: str) -> Member:
+        return self.members[member_id]
+    
     def load_data_from_json(self, filename):
         try:
             with open(filename, 'r') as file:
@@ -111,4 +122,12 @@ class DataManager:
         self.write_to_json(self.__member_schema.dump(list(self.__members_dict.values())), 'members_modified.json')
         self.write_to_json(self.__provider_schema.dump(list(self.__providers_dict.values())), 'providers_modified.json')
 
-    
+    def generate_reports(self):
+        for provider in self.__providers_dict.values():
+            self.__report_generator.generate_provider_report(provider, provider.services)
+
+        for member in self.__members_dict.values():
+            self.__report_generator.generate_member_report(member, member.services)
+
+        self.__report_generator.sum_rep_main(self.__providers_dict)
+

@@ -1,5 +1,8 @@
-
+import os
+import pathlib
 import json
+from data import Member, Provider, MemberService, ProviderService
+from datetime import datetime
 
 # Report Generator class for writing provider, member, and service data to .json reports
 # Accessed by user via the Manager menu in main
@@ -34,9 +37,11 @@ class ReportGenerator:
 
             # for the services array 
             for service in provider_services:
+                service_date = datetime.strptime(service.date, "%m-%d-%Y") if isinstance(service.date, str) else service.date
+                service_date_time = datetime.strptime(service.date_and_time, "%m-%d-%Y %H:%M:%S") if isinstance(service.date_and_time, str) else service.date_and_time
                 service_data = {
-                    "Date of Service": self.format_provider_field(service.date, 10),
-                    "Date/Time Data Received": self.format_provider_field(service.date_and_time, 19),
+                    "Date of Service": self.format_provider_field(service_date.strftime("%m-%d-%Y"), 10),
+                    "Date/Time Data Received": self.format_provider_field(service_date_time.strftime("%m-%d-%Y %H:%M:%S"), 19),
                     "Member Name": self.format_provider_field(service.member_name, 25),
                     "Member Number": self.format_provider_field(service.member_number, 9, is_numeric=True),
                     "Service Code": self.format_provider_field(service.service_code, 6, is_numeric=True),
@@ -73,11 +78,12 @@ class ReportGenerator:
 
             # for the services array 
             for service in member_services:
+                service_date = datetime.strptime(service.date, "%m-%d-%Y") if isinstance(service.date, str) else service.date
                 service_data = {
-                    "Date of Service": self.format_provider_field(service.date, 10),
+                    "Date of Service": self.format_provider_field(service_date.strftime("%m-%d-%Y"), 10),
                     "Provider Name": self.format_provider_field(service.provider_name, 25),
                     "Service Name": self.format_provider_field(service.service_name, 20),
-                }
+                }  
                 report_data["Services"].append(service_data)
 
             file_name = f"{member.name.replace(' ', '_')}.json"
@@ -88,3 +94,72 @@ class ReportGenerator:
         except Exception as e:
             print(f"An error occurred while generating the report for provider {provider.name}: {e}")
             return None
+        
+
+    #Display total amount of services for the week with the following info for each provider: provider name, provider number, and the amount to be transferred
+    # Since this data is the same as EFT data, also create EFT files each including provider name, provider number, and the amount to be transferred
+
+    # Call this function in main where every you need it to generate Summary Reports and EFT files
+    def sum_rep_main(self, providers_dict):
+        total_wk_fee = 0
+        Dir = self.make_dir("EFT")
+        if (Dir == 0):
+            DestPath = pathlib.Path(os.getcwd() + "/EFT/")
+            TotalDest = pathlib.Path(os.getcwd() + "/EFT/EFT_Total")
+            TotalFD = open(TotalDest, "w")
+
+        for id_num, Prov in providers_dict.items():
+            self.print_format(id_num, Prov)
+            if (Dir == 0): 
+                self.EFT_file(DestPath, Prov, id_num, TotalFD)
+            total_wk_fee += Prov.total_wk_fee
+
+        print("Totaled fee for every provider:", total_wk_fee)
+        if (Dir == 0): 
+            TotalFD.write("Total: $" + str(total_wk_fee))
+            TotalFD.close()
+
+        return 0
+
+    # Create EFT files and write data to them
+    def EFT_file(self, DestPath, Prov, id_num, TotalFD):
+        Dest = pathlib.Path(str(DestPath) + "/" + str(id_num))
+
+        try: FD = open(str(Dest), "w")
+        except:
+            print("Error creating file for ID: ", str(id_num))
+            return 3
+
+        try: 
+            FD.write(Prov.name + "\a" + Prov.id_num + "\a" + str(Prov.total_wk_fee))
+            FD.close()
+        except:
+            print("Error writing data to EFT file ID: ", str(id_num))
+            return 2
+
+        try: TotalFD.write(Prov.name + "\a" + Prov.id_num + "\a" + str(Prov.total_wk_fee) + "\n")
+        except:
+            print("Error creating file directory: ", Dest)
+            return 1
+
+        return 0
+
+    def print_format(self, id_num, Prov):
+        try:
+            print("Name:", Prov.name)
+            print("ID:", Prov.id_num)
+            print("Fee:", Prov.total_wk_fee)
+            print()
+            return 0
+        except:
+            print("Unable to display for provider ID:", id_num)
+            return 1
+
+    # Creates the EFT directory to store all the EFT files
+    def make_dir(self, DirStr):
+        try:
+            os.makedirs(DirStr, exist_ok=True)
+            return 0
+        except:
+            print("Error creating directory:", DirStr)
+            return 1

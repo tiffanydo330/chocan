@@ -23,7 +23,6 @@ class Client:
     def __init__(self):
         self.__service_manager = ServiceManager("services.json")
         self.__service_manager.load_services()
-        self.__report_generator = ReportGenerator()
         self.__data_manager = DataManager()
 
     def __del__(self):
@@ -32,39 +31,6 @@ class Client:
     # main_menu_loop function is Client's only public function
     # is called by main() upon startup to offer initial menu options
     # gives Provider, Manager, and Exit options
-
-    def test_print(self, dictionary):
-        is_member = isinstance(next(iter(dictionary.values())), Member)
-        if is_member:
-            for id_num, member in dictionary.items():
-                print("Name:", member.name)
-                print("ID:", member.id_num)
-                print("Street:", member.street)
-                print("City:", member.city)
-                print("State:", member.state)
-                print("Zip Code:", member.zip_code)
-                print("Services:")
-                for service in member.services:
-                    print("- Date:", service.date)
-                    print("- Provider Name:", service.provider_name)
-                    print("- Service Name:", service.service_name)
-                print()
-        else:
-            for id_num, provider in dictionary.items():
-                print("Name:", provider.name)
-                print("ID:", provider.id_num)
-                print("Street:", provider.street)
-                print("City:", provider.city)
-                print("State:", provider.state)
-                print("Zip Code:", provider.zip_code)
-                print("Services:")
-                for service in provider.services:
-                    print("- Date & Time:", service.date_and_time)
-                    print("- Member Name:", service.member_name)
-                    print("- Member Number:", service.member_number)
-                    print("- Service Code:", service.service_code)
-                    print("- Fee:", service.fee)
-                print()
 
     def main_menu_loop(self):
         while True:
@@ -155,15 +121,7 @@ class Client:
                 case 2:
                     self.__manage_providers_loop()
                 case 3:
-                    for provider in self.__providers_dict.values():
-                        self.__report_generator.generate_provider_report(provider, provider.services)
-
-                    for member in self.__members_dict.values():
-                        self.__report_generator.generate_member_report(member, member.services)
-
-                    # Need to rename, make class
-                    Carl_Swin.sum_rep_main(self.__providers_dict)
-
+                    self.__data_manager.generate_reports()
                     # Old comments, maybe still relevant
                     # Ask self.__report_generator to generate week's reports
                     # Maybe we pass in self.__mp_managemnet as an arg?
@@ -382,6 +340,40 @@ class Client:
                 case _:
                     print(f"Error: invalid option {option}")
         return
+
+   def test_print(self, dictionary):
+        is_member = isinstance(next(iter(dictionary.values())), Member)
+        if is_member:
+            for id_num, member in dictionary.items():
+                print("Name:", member.name)
+                print("ID:", member.id_num)
+                print("Street:", member.street)
+                print("City:", member.city)
+                print("State:", member.state)
+                print("Zip Code:", member.zip_code)
+                print("Services:")
+                for service in member.services:
+                    print("- Date:", service.date)
+                    print("- Provider Name:", service.provider_name)
+                    print("- Service Name:", service.service_name)
+                print()
+        else:
+            for id_num, provider in dictionary.items():
+                print("Name:", provider.name)
+                print("ID:", provider.id_num)
+                print("Street:", provider.street)
+                print("City:", provider.city)
+                print("State:", provider.state)
+                print("Zip Code:", provider.zip_code)
+                print("Services:")
+                for service in provider.services:
+                    print("- Date & Time:", service.date_and_time)
+                    print("- Member Name:", service.member_name)
+                    print("- Member Number:", service.member_number)
+                    print("- Service Code:", service.service_code)
+                    print("- Fee:", service.fee)
+                print()
+
 
 
     # bool_input as a helper function for recieving boolean input

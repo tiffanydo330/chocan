@@ -6,9 +6,9 @@ import time
 from services import ServiceManager
 from report_generator import ReportGenerator
 import Carl_Swin
-from main import load_data_from_json
+#from main import load_data_from_json
 from data import Member, Provider  # Importing custom data models
-from schema import MemberSchema, ProviderSchema  # Importing schemas for data serialization
+#from schema import MemberSchema, ProviderSchema  # Importing schemas for data serialization
 from typing import Dict, Any  # Importing type hints for data types
 from data_management import DataManager
 
@@ -26,26 +26,25 @@ class Client:
         self.__service_manager = ServiceManager("services.json")
         self.__service_manager.load_services()
         self.__report_generator = ReportGenerator()
+        self.__data_manager = DataManager()
 
         # What follows is from main! Next, this will be maintained within its own class
         # Load data from JSON files
-        self.__member_data = load_data_from_json('members.json')
-        self.__provider_data = load_data_from_json('providers.json')
+        #self.__member_data = load_data_from_json('members.json')
+        #self.__provider_data = load_data_from_json('providers.json')
 
         # Deserialize JSON data into dictionaries
-        if self.__member_data:
-            self.__member_schema = MemberSchema(many=True)  # Create a schema for member data
-            self.__members_dict: Dict[str, Member] = {member.id_num: member for member in self.__member_schema.load(self.__member_data)}
+        #if self.__member_data:
+            #self.__member_schema = MemberSchema(many=True)  # Create a schema for member data
+            #self.__members_dict: Dict[str, Member] = {member.id_num: member for member in self.__member_schema.load(self.__member_data)}
 
-        if self.__provider_data:
-            self.__provider_schema = ProviderSchema(many=True)  # Create a schema for provider data
-            self.__providers_dict: Dict[str, Provider] = {provider.id_num: provider 
-                    for provider in self.__provider_schema.load(self.__provider_data)}
-            print(self.__providers_dict)
+        #if self.__provider_data:
+            #self.__provider_schema = ProviderSchema(many=True)  # Create a schema for provider data
+            #self.__providers_dict: Dict[str, Provider] = {provider.id_num: provider 
+                    #for provider in self.__provider_schema.load(self.__provider_data)}
+            #print(self.__providers_dict)
             # To be filled in upon module completion:
             # self.__mp_management = MemberProviderManagement()
-        self.__data_manager = DataManager(self.get_member_dict(), 
-                                          self.get_provider_dict())
     
     def __del__(self):
         self.__service_manager.save_services()
@@ -54,11 +53,16 @@ class Client:
     # is called by main() upon startup to offer initial menu options
     # gives Provider, Manager, and Exit options
 
-    def get_member_dict(self):
-        return self.__members_dict
-
-    def get_provider_dict(self):
-        return self.__providers_dict
+    def cheeky_print(self, dictionary):
+        for id_num, member in dictionary.items():
+            print("Name:", member.name)
+            print("ID:", member.id_num)
+            print("Services:")
+            for service in member.services:
+                print("- Date:", service.date)
+                print("- Provider Name:", service.provider_name)
+                print("- Service Name:", service.service_name)
+            print()
 
     def main_menu_loop(self):
         while True:
@@ -189,7 +193,7 @@ class Client:
                     print("Full Name?: ")
                     temp_name = self.__string_input(80)
                     print("ID Number?: ")
-                    temp_id = self.__string_input(6)
+                    temp_id = self.__string_input(9)
                     print("Street Address?: ")
                     temp_street = self.__string_input(100)
                     print("City?: ")
@@ -202,24 +206,42 @@ class Client:
                                              temp_state, temp_zip, services = [])
                     self.__data_manager.add_member(temp_id, new_member_data)
                     print("Member added!\n")
-                    #TODO jaden: maybe i should add "Services?" and take input for that too?
+                    self.cheeky_print(self.__data_manager.get_member_dict()) #TODO delete
+                    break
 
-                #case 2:
+                case 2:
                     # Prompt for Member name/id
                     print("Member ID to delete?: ")
-                    id_to_delete = self.__string_input(6)
-                    #if (self.data_manager.remove_member(id_to_delete) == 0)
-                        
+                    id_to_delete = self.__string_input(9)
                     # Send to self.__mp_managment for deletion
                     # If can't find, error
-                #case 3:
+                    if (self.__data_manager.remove_member(id_to_delete) == 1):
+                        print(f"{id_to_delete} not found!\n") # TODO better error handling
+                        break
+                    else:
+                        print("{id_to_delete} deleted!\n")
+                    self.cheeky_print(self.__data_manager.get_member_dict()) #TODO delete
+                        
+                case 3:
                     # Not sure about this one -
                     # Possibly need another function for menu to give options on WHAT to update
                     # Prompt for Member name/id
+                    print("Member ID to modify?: ")
+                    id_to_modify = self.__string_input(9)
+                    
+                    temp_member = get_member(id_to_modify)
+                    if (temp_member == None):
+                        print("{id_to_modify} nt found!\n")
+                        break
                     # Prompt for what to change and how
+                    self.__modify_menu(id_to_modify, temp_member)
+                    self.__data_manager.modify_member(temp_member) 
                     # Send to self.__mp_management for update
                     # If can't find, error
                     # If change N/A, error
+                    self.cheeky_print(self.__data_manager.get_member_dict()) #TODO delete
+                    :wa
+                    break
                 case 0:
                     break
                 case _:
@@ -323,10 +345,3 @@ class Client:
         return time.strftime("%m-%d-%Y", current_time)
 
 
-# Initial testing:
-def main():
-    client = Client()
-    client.main_menu_loop()
-
-if __name__ == "__main__":
-    main()

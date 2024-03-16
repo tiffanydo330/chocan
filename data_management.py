@@ -119,8 +119,8 @@ class DataManager:
                 print(f"Error writing data to '{filename}': {e}")
 
     def write_all_to_json(self):
-        self.write_to_json(self.__member_schema.dump(list(self.__members_dict.values())), 'members_modified.json')
-        self.write_to_json(self.__provider_schema.dump(list(self.__providers_dict.values())), 'providers_modified.json')
+        self.write_to_json(self.__member_schema.dump(list(self.__members_dict.values())), 'members.json')
+        self.write_to_json(self.__provider_schema.dump(list(self.__providers_dict.values())), 'providers.json')
 
     def generate_reports(self):
         for provider in self.__providers_dict.values():

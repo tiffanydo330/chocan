@@ -2,7 +2,7 @@ import json  # Importing the json module to work with JSON data
 from data import Member, Provider  # Importing custom data models
 from schema import MemberSchema, ProviderSchema  # Importing schemas for data serialization
 from typing import Dict, Any  # Importing type hints for data types
-from data_management import load_data_from_json
+from data_management import DataManager
 from marshmallow import Schema, fields, post_load
 from Carl_Swin import sum_rep_main, EFT_file, print_format, make_dir
 from datetime import datetime
@@ -10,7 +10,8 @@ import os
 import pathlib
 import pytest
 
-provider_data = load_data_from_json('providers_pytest.json')
+MyData = DataManager()
+provider_data = MyData.load_data_from_json('providers_pytest.json')
 provider_schema = ProviderSchema(many=True)
 providers_dict: Dict[str, Member] = {provider.id_num: provider for provider in provider_schema.load(provider_data)}
 

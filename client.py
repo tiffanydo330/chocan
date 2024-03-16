@@ -77,7 +77,7 @@ class Client:
                     date = self.__time_input()
 
                     print("\nEnter service ID:")
-                    service_id = self.__int_intput(S_ID_MAX)
+                    service_id = self.__int_input(S_ID_MAX)
                     # give option to display provider directory to find service id
                     # Validate service_id
 

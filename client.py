@@ -341,7 +341,7 @@ class Client:
                     print(f"Error: invalid option {option}")
         return
 
-   def test_print(self, dictionary):
+    def test_print(self, dictionary):
         is_member = isinstance(next(iter(dictionary.values())), Member)
         if is_member:
             for id_num, member in dictionary.items():
